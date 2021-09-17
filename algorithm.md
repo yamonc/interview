@@ -266,6 +266,150 @@ class Solution {
 }
 ```
 
+----
+
+以下为岛屿问题：
+
+岛屿问题的DFS遍历的框架代码：
+
+```java
+void dfs(int[][] grid, int r, int c) {
+    // 判断 base case
+    if (!inArea(grid, r, c)) {
+        return;
+    }
+    // 如果这个格子不是岛屿，直接返回
+    if (grid[r][c] != 1) {
+        return;
+    }
+    grid[r][c] = 2; // 将格子标记为「已遍历过」
+    
+    // 访问上、下、左、右四个相邻结点
+    dfs(grid, r - 1, c);
+    dfs(grid, r + 1, c);
+    dfs(grid, r, c - 1);
+    dfs(grid, r, c + 1);
+}
+
+// 判断坐标 (r, c) 是否在网格中
+boolean inArea(int[][] grid, int r, int c) {
+    return 0 <= r && r < grid.length 
+        	&& 0 <= c && c < grid[0].length;
+}
+```
+
+### [200. 岛屿数量](https://leetcode-cn.com/problems/number-of-islands/)
+
+DFS
+
+```java
+给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。
+岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+此外，你可以假设该网格的四条边均被水包围。
+示例 1：
+输入：grid = [
+  ["1","1","1","1","0"],
+  ["1","1","0","1","0"],
+  ["1","1","0","0","0"],
+  ["0","0","0","0","0"]
+]
+输出：1
+示例 2：
+输入：grid = [
+  ["1","1","0","0","0"],
+  ["1","1","0","0","0"],
+  ["0","0","1","0","0"],
+  ["0","0","0","1","1"]
+]
+输出：3
+```
+
+```java
+public int numIslands(char[][] grid) {
+        int res = 0;
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
+                if (grid[r][c] == '1') {
+                    res++;
+                    dfs(grid, r, c);
+                }
+            }
+        }
+        return res;
+    }
+
+    void dfs(char[][] grid, int r, int c) {
+        // 判断 base case
+        if (!inArea(grid, r, c)) {
+            return;
+        }
+        // 如果这个格子不是岛屿，直接返回
+        if (grid[r][c] - '0' != 1) {
+            return;
+        }
+        // 将格子标记为「已遍历过」
+        grid[r][c] = '2';
+
+        // 访问上、下、左、右四个相邻结点
+        dfs(grid, r - 1, c);
+        dfs(grid, r + 1, c);
+        dfs(grid, r, c - 1);
+        dfs(grid, r, c + 1);
+    }
+
+    // 判断坐标 (r, c) 是否在网格中
+    boolean inArea(char[][] grid, int r, int c) {
+        return 0 <= r && r < grid.length
+                && 0 <= c && c < grid[0].length;
+    }
+```
+
+### [695. 岛屿的最大面积](https://leetcode-cn.com/problems/max-area-of-island/)
+
+![image-20210915195226155](https://gitee.com/yamonc/blogImage/raw/master//img/blogImage/image-20210915195226155.png)
+
+```java
+class Solution {
+   public int maxAreaOfIsland(int[][] grid) {
+        int max = 0;
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
+                if (grid[r][c] == 1) {
+                    int a = area(grid, r, c);
+                    max = Math.max(a, max);
+                }
+            }
+        }
+        return max;
+    }
+
+    private int area(int[][] grid, int r, int c) {
+        if (!inArea(grid, r, c)) {
+            return 0;
+        }
+        if (grid[r][c] != 1) {
+            return 0;
+        }
+        grid[r][c] = 2;
+        return 1 + area(grid, r - 1, c) + area(grid, r + 1, c) + area(grid, r, c - 1) + area(grid, r, c + 1);
+    }
+
+    private boolean inArea(int[][] grid, int r, int c) {
+        return r >= 0 && r < grid.length && c >= 0 && c < grid[0].length;
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## 栈
@@ -603,6 +747,70 @@ public ListNode ReverseList(ListNode head) {
     }
 ```
 
+### 对链表进行插入排序
+
+```java
+ public ListNode insertionSortList(ListNode head) {
+          ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode lastSorted = head;
+        ListNode cur = head.next;
+        while (cur!=null){
+            if (lastSorted.val<=cur.val){
+                lastSorted = lastSorted.next;
+            }else {
+                ListNode prev = dummy;
+                while (prev.next.val <= cur.val){
+                    prev = prev.next;
+                }
+                lastSorted.next = cur.next;
+                cur.next = prev.next;
+                prev.next = cur;
+            }
+            cur = lastSorted.next;
+        }
+        return dummy.next;    
+    }
+```
+
+### [1669. 合并两个链表](https://leetcode-cn.com/problems/merge-in-between-linked-lists/)
+
+![image-20210916184557532](https://gitee.com/yamonc/blogImage/raw/master//img/blogImage/image-20210916184557532.png)
+
+[合并两个链表](https://leetcode-cn.com/problems/merge-in-between-linked-lists/solution/he-bing-liang-ge-lian-biao-by-zhang_cj-idp0/)
+
+思路：
+先查找list1中第a个结点的前一个结点，第b个结点的后一个结点。每遍历一个结点，a--，b--，当a=0时，则遍历到第a个结点，并使用list1BeforeA记录第a-1个结点，当b=0时，则遍历到第b个结点，使用list1BeforeA记录第b-1个结点。然后再使用list1BeforeA.next=list2，然后使用list2Curr.next=list1AfterB，将两个链表连接起
+
+```java
+ public ListNode mergeInBetween(ListNode list1, int a, int b, ListNode list2) {
+        ListNode list1BeforeA  = list1;
+        ListNode list2AfterB = list1;
+
+        ListNode list1Curr = list1;
+        ListNode list2Curr= list2;
+
+        while (b>0 && list1Curr!=null){
+            if (a>0){
+                list1BeforeA = list1Curr;
+                a--;
+            }
+            list1Curr = list1Curr.next;
+            b--;
+        }
+        list2AfterB = list1Curr.next;
+        while (list2Curr.next!=null){
+            list2Curr= list2Curr.next;
+        }
+        list2Curr.next = list2AfterB;
+        list1BeforeA.next = list2;
+        return list1;
+
+    }
+```
+
+
+
 ## 树
 
 ### 求根节点到叶子节点数字之和
@@ -851,6 +1059,60 @@ public class HeapSort {
 
 ```
 
+### 选择排序
+
+每一轮选择未排序的最小的元素交换到未排序的最开头，然后下一轮从排好序的下一个元素开始，再找剩下最小的放在第二个位置。。。
+
+```java
+ public int[] sortArray(int[] nums) {
+        int n = nums.length;
+        for (int i = 0; i < n; i++) {
+            int min = nums[i];
+            for (int j = i+1; j < n; j++) {
+                if (nums[j]<min){
+                    min = nums[j];
+                    swap(nums, i, j);
+                }
+            }
+        }
+        return nums;
+    }
+     public void swap(int[] nums, int i, int j){
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j]= temp;
+    }
+```
+
+### 插入排序
+
+每次将一个数字插入到有序数组里，成为一个更长的有序数组，有限次操作之后，数组整体有序。
+
+![](https://pic.leetcode-cn.com/710dd138492c0da4324657033971f3bee0355514f2ab2834756c988a90398cbb-file_1585624920301)
+
+```java
+  // 插入排序：稳定排序，在接近有序的情况下，表现优异
+
+    public int[] sortArray(int[] nums) {
+        int len = nums.length;
+        // 循环不变量：将 nums[i] 插入到区间 [0, i) 使之成为有序数组
+        for (int i = 1; i < len; i++) {
+            // 先暂存这个元素，然后之前元素逐个后移，留出空位
+            int temp = nums[i];
+            int j = i;
+            // 注意边界 j > 0
+            while (j > 0 && nums[j - 1] > temp) {
+                nums[j] = nums[j - 1];
+                j--;
+            }
+            nums[j] = temp;
+        }
+        return nums;
+    }
+```
+
+
+
 ## 区间集合
 
 ### [435. 无重叠区间](https://leetcode-cn.com/problems/non-overlapping-intervals/)
@@ -896,6 +1158,8 @@ class Solution {
     }
 }
 ```
+
+#### 
 
 
 
